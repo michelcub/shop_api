@@ -28,12 +28,16 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({'msg':'User created is fail'}, status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request):
-        user = self.queryset.filter(pk=request.user.pk).last()
-        if user:
-            serializer = UserSerializer(data=user)
-            return Response(serializer.data, status.HTTP_200_OK)
+    def retrieve(self, request, pk=None):
+        # Obtiene el usuario autenticado directamente
+        user = request.user
 
-        return Response('No exist this user', status.HTTP_404_NOT_FOUND)
+        # Si el usuario no está autenticado, manejarlo según lo necesites
+        if not user.is_authenticated:
+            return Response({'detail': 'User not authenticated'}, status.HTTP_401_UNAUTHORIZED)
+
+        # Serializa y devuelve los datos del usuario
+        serializer = UserSerializer(user)  # Solo pasa el objeto `user` al serializador
+        return Response(serializer.data, status.HTTP_200_OK)
 
 
