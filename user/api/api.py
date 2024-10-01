@@ -28,8 +28,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({'msg':'User created is fail'}, status.HTTP_400_BAD_REQUEST)
 
-    def retrieve(self, request, pk):
-        user = self.queryset.filter(pk=pk).last()
+    def retrieve(self, request):
+        user = self.queryset.filter(pk=request.user.pk).last()
         if user:
             serializer = UserSerializer(data=user)
             return Response(serializer.data, status.HTTP_200_OK)
