@@ -7,15 +7,38 @@ from .serializers import UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """
+    This class represents a viewset for the User model. It inherits from
+    `viewsets.ModelViewSet` which provides default CRUD (Create, Retrieve, Update, Delete)
+    operations.
+
+    Attributes:
+        queryset (QuerySet): A QuerySet that retrieves all User instances.
+        serializer_class (UserSerializer): A serializer class that converts User instances
+        into JSON format.
+
+    Methods:
+        get_permissions(self): Determines the permissions for each action based on whether
+        the action is "create" or not. If it's "create", it allows any user to create a new
+        user. Otherwise, it requires the user to be authenticated.
+
+        create(self, request): Creates a new User instance from the request data. If the
+        data is valid, it saves the instance and returns a success message with HTTP status
+        201 (Created). If the data is invalid, it returns a failure message with HTTP status
+        400 (Bad Request).
+
+        retrieve(self, request, pk=None): Retrieves the authenticated user's data and
+        returns it in JSON format with HTTP status 200 (OK). If the user is not authenticated,
+        it returns a failure message with HTTP status 401 (Unauthorized).
+    """
+
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def get_permissions(self):
         if self.action == "create":
-            # Permitir acceso sin autenticación para crear usuario
             permission_classes = [AllowAny]
         else:
-            # Requerir autenticación para las demás acciones
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
